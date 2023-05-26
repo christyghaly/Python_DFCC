@@ -56,8 +56,8 @@ def radavg(C,pixelSize):
         
     Radavg=Radavg[np.logical_not(np.isnan(Radavg))] #excluding nan values
     Radavg=np.reshape(Radavg, (1, Radavg.size))
-    Radavg[0][0]= C[int((C.shape[0]+1)/2)][int((C.shape[1]+1)/2)] 
+    Radavg[0][0]= C[int((C.shape[0]+1)/2)-1][int((C.shape[1]+1)/2)-1] 
     #Radavg[0]= C[(C.shape[0]+1)/2][(C.shape[1]+1)/2]
-    lags = lags[0:(Radavg.size)+1]*pixelSize
+    lags = lags[0:(Radavg.size)]*pixelSize
     
     return Radavg,lags

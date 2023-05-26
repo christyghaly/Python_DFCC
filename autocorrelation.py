@@ -36,6 +36,8 @@ def autocorrelation(dir_mag, pixelsize, mask, xp, yp):
     temp_mask = im.fromarray(mask)
     new_resized_mask = temp_mask.resize((mask_new_size_x,mask_new_size_y),im.BICUBIC)
     
+
+    
     new_resized_mask.convert('RGB').save('temporaryImage.png')
 
     img2 = cv2.imread('temporaryImage.png')
@@ -45,9 +47,34 @@ def autocorrelation(dir_mag, pixelsize, mask, xp, yp):
   
     new_resized_mask_bin = cv2.cvtColor(img2, cv2.COLOR_BGR2GRAY)
     _,thresh1 = cv2.threshold(new_resized_mask_bin,127,255,cv2.THRESH_BINARY)
-    new_resized_mask_bin=np.transpose(thresh1) #0-255
+    # new_resized_mask_bin=np.transpose(thresh1) #0-255
+    #The follwoing lines to solve the problem of black points inside the nucleus
     
-    maskc,radius = innerCircle.innerCircle(new_resized_mask_bin)    
+    cv2.imwrite('temporaryImage2.png', new_resized_mask_bin)
+    img3 = cv2.imread('temporaryImage2.png')
+    for ii in range(img3.shape[0]):
+        for jj in range(img3.shape[1]):
+            if(img3[ii,jj,0] !=255):
+                img3[ii,jj,0]=0
+    cnts, hierarchy= cv2.findContours(img3[:,:,0],cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
+    max_contour=max(cnts, key=cv2.contourArea)
+    cv2.drawContours(img3, [max_contour], -1, (255,255,255), -1)
+    cv2.imshow("img_processed", img3)
+    cv2.waitKey(0)
+    cv2.destroyAllWindows()
+    new_resized_mask_bin2 = cv2.cvtColor(img3, cv2.COLOR_BGR2GRAY)
+    
+    
+    maskc,radius = innerCircle.innerCircle(new_resized_mask_bin2)
+    
+    
+    # #This block for Testing and should be deleted in line 52 in atocorrelation
+    # imgg = cv2.imread("MaskC_outputFrominnerCircle.png")
+    # maskc= imgg[:,:,2].astype(np.float64)
+    # cv2.imshow('maskc',maskc)
+    # cv2.waitKey(0)  
+    # cv2.destroyAllWindows()
+
     #maskc = new_resized_mask_bin
     for i in range(maskc.shape[0]):   
         for j in range(maskc.shape[1]):    
@@ -88,8 +115,13 @@ def autocorrelation(dir_mag, pixelsize, mask, xp, yp):
             #match with each other, but you also get the point of time or an index, 
             #where they are the most similar
             #Calculate the cross correlation and normalize by the energy of the argument
-            C[k] = scipy.signal.correlate(z, z)/np.sum(np.abs(z)**2)
+            denominator= np.reshape(np.abs(z), (-1,1))
+            C[k] = scipy.signal.correlate(z, z)/np.sum(np.power(denominator,2))
             #crop correlation function by rescaled version of circle shaped
+            for i in range(maskc.shape[0]):   
+                for j in range(maskc.shape[1]):    
+                    if(maskc[i][j] == 255):        
+                        maskc[i][j]= 1
             C[k]= np.multiply(C[k],maskc)
             
             #radial average

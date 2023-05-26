@@ -198,6 +198,9 @@ if __name__ == "__main__":
     XPos= numpy.zeros(shape=(number_frames,frames[0].shape[0], frames[0].shape[1]), dtype=float)
     YPos= numpy.zeros(shape=(number_frames,frames[0].shape[0], frames[0].shape[1]), dtype=float)
     for nonRefusedValues, trajectory in enumerate(trajectories):
+        # ii = int(trajectory[0][0]) #26
+        # jj =  int(trajectory[0][1]) #94
+        
         ii = int(trajectory[0][1]) #94
         jj =  int(trajectory[0][0]) #26
     
@@ -220,12 +223,13 @@ if __name__ == "__main__":
     cv2.imwrite(filename, mask_matrix)
     
     
-    # R,lags = autocorrelation.autocorrelation('dir', 0.088,mask_matrix,XPos,YPos)
-    # #R_mag,_= autocorrelation.autocorrelation('mag', 0.088,mask_matrix,XPos,YPos)
+    R,lags = autocorrelation.autocorrelation('dir', 0.088,mask_matrix,XPos,YPos)
+    R_mag,_= autocorrelation.autocorrelation('mag', 0.088,mask_matrix,XPos,YPos)
     
-    # xi,nu = AutoCorrelationFit(lags,R)
-    # #xi_mag,nu_mag = AutoCorrelationFit(lags,R_mag)
-    # PlotParameters(xi, nu, 0.2)
+    xi,nu = AutoCorrelationFit(lags,R)
+    xi_mag,nu_mag = AutoCorrelationFit(lags,R_mag)
+    PlotParameters(xi, nu, 0.2, xi_mag = xi_mag, nu_mag= nu_mag)
+    
     
     
     

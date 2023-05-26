@@ -19,13 +19,29 @@ def innerCircle(mask):
     #cnts, hierarchy= cv2.findContours(gray.copy(),cv2.RETR_EXTERNAL,cv2.CHAIN_APPROX_SIMPLE)
     #in order to get all the boundaries points we can uncomment the previous line which uses Chain appro
     # simple to decrease the boundaries line for memory optimization
-    
-    cv2.imshow('Mask3',mask)
-    cv2.waitKey(0)  
-    cv2.destroyAllWindows()
-    
+
+            
+
+
     
     cnts, hierarchy= cv2.findContours(mask.copy(),cv2.RETR_EXTERNAL,cv2.CHAIN_APPROX_NONE)
+    
+    # #The follwoing lines to solve the problem of black points inside the nucleus
+    # copied_mask = mask.copy()
+    # cv2.imshow('Mask3',mask)
+    # cv2.waitKey(0)  
+    # cv2.destroyAllWindows()
+    # for ii in range(copied_mask.shape[0]):
+    #     for jj in range(copied_mask.shape[1]):
+    #         if(copied_mask[ii][jj] !=255):
+    #             copied_mask[ii][jj]=0
+    # cnts, hierarchy= cv2.findContours(copied_mask,cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
+    # max_contour=max(copied_mask, key=cv2.contourArea)
+    # cv2.drawContours(copied_mask, [max_contour], -1, (255,255,255), -1)
+    # cv2.imshow("img_processed", copied_mask)
+    # cv2.waitKey(0)
+    # cv2.destroyAllWindows()
+
     bound=np.zeros((2,2))
     for contour in cnts:
         bound = np.reshape(contour, (-1, 2)) # to change the tuple to size (numberOfPoints*2)

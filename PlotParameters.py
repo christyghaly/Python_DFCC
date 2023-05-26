@@ -25,9 +25,11 @@ def PlotParameters(xi_dir, nu_dir, dT,xi_mag=None, nu_mag=None):
     if nu_mag is not None:
         ax2.errorbar(timeLag, nu_mag[:,0],yerr = nu_mag[:,1],fmt='-o',capsize=5, c= 'green')
         
+    
     ax2.set_xlabel('Time lag')
     ax2.set_ylabel('Smootheness Parameter')
     ax2.set_title('Line plot with error bars')
+    plt.legend()
     plt.show()
     
     
